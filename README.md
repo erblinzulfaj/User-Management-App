@@ -1,73 +1,83 @@
-# React + TypeScript + Vite
+React User Management App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple User Management application built with React, Redux, and Chakra UI. This app demonstrates working with components, state, routing, forms, and API data fetching.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Features:
 
-## React Compiler
+1. User List: Fetch and display users from JSONPlaceholder
+ in a card layout with name, email, and company.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+2. Search: Filter users by name or email in real time.
 
-## Expanding the ESLint configuration
+3. User Details: Click a user to see full information including address, phone, website, and company.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+4. Add User: Add a new user locally with validation (name and email required). New users appear at the top of the list.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+5. Edit & Delete: Edit user information via a modal or delete a user from the list.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+6. Sorting: Sort users alphabetically A → Z or Z → A.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+7. Responsive Design: Works on mobile and desktop screens using Chakra UI.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Tech Stack:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. React (Functional Components & Hooks)
+
+2. Redux Toolkit (State Management)
+
+3. React Router DOM (Routing)
+
+4. Chakra UI (UI Components & Styling)
+
+5. TypeScript (Type Safety)
+
+
+
+Installation:
+
+1. Clone the repository
+
+git clone https://github.com/YOUR_USERNAME/user-management-app.git
+cd user-management-app
+
+
+2. Install dependencies
+
+npm install
+
+
+3. Run the app
+
+npm run dev
+
+
+4. Open your browser at:
+
+http://localhost:5173
+
+
+
+Usage / Testing:
+
+1. View Users: Browse the user list on the homepage.
+
+2. Search: Type in the search bar to filter users by name or email.
+
+3. Sort: Toggle the sort button to change the order alphabetically.
+
+4. Add User: Click Add New User, fill in the form, and submit.
+
+5. Edit User: Click Edit on a user card, update information, and save.
+
+6. Delete User: Click Delete on a user card.
+
+7. User Details: Click a user’s name to view full details on a separate page.
+
+
+Notes:
+
+1. New users are stored locally, so they won’t persist on page reload.
+
+2. Fully styled and responsive using Chakra UI.
