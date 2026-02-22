@@ -16,13 +16,15 @@ const userSlice = createSlice({
     setUsers: (state, action: PayloadAction<User[]>) => {
       state.users = action.payload;
     },
-    addUser: (state, action: PayloadAction<Omit<User, "id">>) => {
-      const newUser: User = {
-        ...action.payload,
-        id: Date.now(),
-      };
-      state.users.unshift(newUser);
-    },
+   addUser: (state, action: PayloadAction<Omit<User, "id">>) => {
+  const newUser: User = {
+    ...action.payload,
+    id: Date.now(),
+    isLocal: true, // FLAG për user-at lokal
+  };
+  state.users.unshift(newUser);
+},
+
     updateUser: (state, action: PayloadAction<User>) => {
       const index = state.users.findIndex(
         (u) => u.id === action.payload.id

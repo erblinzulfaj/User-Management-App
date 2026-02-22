@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import type { User } from "../types/User";
 
@@ -19,6 +19,7 @@ import {
   Input,
   Badge,
   Spinner,
+  Select,
   useColorModeValue,
 } from "@chakra-ui/react";
 
@@ -28,11 +29,10 @@ import UserEditForm from "../components/UserEditForm";
 const UsersPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const users = useSelector((state: RootState) => state.users.users);
+
   const [showAddForm, setShowAddForm] = useState(false);
-
-
   const [search, setSearch] = useState("");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortOrder, setSortOrder] = useState<"none" | "asc" | "desc">("none");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -43,6 +43,7 @@ const UsersPage = () => {
     "gray.800"
   );
 
+  // Fetch users
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -58,29 +59,10 @@ const UsersPage = () => {
     fetchUsers();
   }, [dispatch]);
 
-if (loading) {
-  return (
-    <Box textAlign="center" mt={20}>
-  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" />
-
-  </Box>
-  );
-}
-
-
-if (error) {
-  return (
-    <Box textAlign="center" mt="20">
-      <Text color="red.500" fontSize="lg" fontWeight="semibold">
-        {error}
-      </Text>
-    </Box>
-  );
-}
-
-
+  // Handlers
   const handleAddUser = (newUser: Omit<User, "id">) => {
     dispatch(addUser(newUser));
+    setShowAddForm(false);
   };
 
   const handleDeleteUser = (id: number) => {
@@ -92,17 +74,54 @@ if (error) {
     setEditingUser(null);
   };
 
-  const filteredUsers = users
-    .filter(
-      (u) =>
-        u.name.toLowerCase().includes(search.toLowerCase()) ||
-        u.email.toLowerCase().includes(search.toLowerCase())
-    )
-    .sort((a, b) =>
-      sortOrder === "asc"
-        ? a.name.localeCompare(b.name)
-        : b.name.localeCompare(a.name)
+  // Filtrimi + Sortimi + Local users gjithmonë në krye
+  const finalUsersList = useMemo(() => {
+    // 1. Shtojmë user-at lokal në krye
+    const localUsers = users.filter((u) => u.isLocal);
+    const fetchedUsers = users.filter((u) => !u.isLocal);
+
+    // 2. Filtrimi për search
+    const filterFn = (u: User) =>
+      u.name.toLowerCase().includes(search.toLowerCase()) ||
+      u.email.toLowerCase().includes(search.toLowerCase());
+
+    let result = [
+      ...localUsers.filter(filterFn),
+      ...fetchedUsers.filter(filterFn),
+    ];
+
+    // 3. Sortimi nëse zgjidhet
+    if (sortOrder === "asc") {
+      result = result.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortOrder === "desc") {
+      result = result.sort((a, b) => b.name.localeCompare(a.name));
+    }
+
+    return result;
+  }, [users, search, sortOrder]);
+
+  if (loading) {
+    return (
+      <Box textAlign="center" mt={20}>
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="blue.500"
+        />
+      </Box>
     );
+  }
+
+  if (error) {
+    return (
+      <Box textAlign="center" mt="20">
+        <Text color="red.500" fontSize="lg" fontWeight="semibold">
+          {error}
+        </Text>
+      </Box>
+    );
+  }
 
   return (
     <Box minH="100vh" bgGradient={pageBg} py={10}>
@@ -111,35 +130,23 @@ if (error) {
           User Management
         </Heading>
 
-        {/* Add User */}
-     {/* Toggle Add User Form */}
-<Button
-  colorScheme="green"
-  mb={4}
-  onClick={() => setShowAddForm(!showAddForm)}
->
-  {showAddForm ? "Close Form" : "Add User"}
-</Button>
+        {/* Add User Toggle */}
+        <Button
+          colorScheme="green"
+          mb={4}
+          onClick={() => setShowAddForm(!showAddForm)}
+        >
+          {showAddForm ? "Close Form" : "Add User"}
+        </Button>
 
-{showAddForm && (
-  <Box
-    bg={cardBg}
-    p={6}
-    borderRadius="xl"
-    boxShadow="lg"
-    mb={6}
-  >
-    <UserForm onAdd={handleAddUser} />
-  </Box>
-)}
-
+        {showAddForm && (
+          <Box bg={cardBg} p={6} borderRadius="xl" boxShadow="lg" mb={6}>
+            <UserForm onAdd={handleAddUser} />
+          </Box>
+        )}
 
         {/* Controls */}
-        <Flex
-          direction={{ base: "column", md: "row" }}
-          gap={4}
-          mb={6}
-        >
+        <Flex direction={{ base: "column", md: "row" }} gap={4} mb={6}>
           <Input
             placeholder="Search by name or email..."
             bg="white"
@@ -147,22 +154,23 @@ if (error) {
             onChange={(e) => setSearch(e.target.value)}
           />
 
-          <Button
-            colorScheme="purple"
-            onClick={() =>
-              setSortOrder(sortOrder === "asc" ? "desc" : "asc")
-            }
+          <Select
+            bg="white"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value as any)}
           >
-            Sort ({sortOrder === "asc" ? "A → Z" : "Z → A"})
-          </Button>
+            <option value="none">No Sorting</option>
+            <option value="asc">A → Z</option>
+            <option value="desc">Z → A</option>
+          </Select>
         </Flex>
 
         {/* Users */}
         <Stack spacing={4}>
-          {filteredUsers.length === 0 ? (
+          {finalUsersList.length === 0 ? (
             <Text textAlign="center">No users found.</Text>
           ) : (
-            filteredUsers.map((user) => (
+            finalUsersList.map((user) => (
               <Box
                 key={user.id}
                 bg={cardBg}
@@ -181,11 +189,7 @@ if (error) {
                   direction={{ base: "column", md: "row" }}
                   gap={3}
                 >
-                  <Box
-                    as={Link}
-                    to={`/users/${user.id}`}
-                    flex="1"
-                  >
+                  <Box as={Link} to={`/users/${user.id}`} flex="1">
                     <Heading size="md">{user.name}</Heading>
                     <Text color="gray.600">{user.email}</Text>
                     <Badge mt={2} colorScheme="blue">
@@ -224,16 +228,8 @@ if (error) {
           />
         )}
       </Container>
-         </Box>
+    </Box>
   );
 };
-
-
-
-
-
-
-
-
 
 export default UsersPage;
