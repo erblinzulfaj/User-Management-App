@@ -39,7 +39,7 @@ Installation:
 
 1. Clone the repository
 
-git clone https://github.com/YOUR_USERNAME/user-management-app.git
+git clone https://github.com/erblinzulfaj/User-Management-App.git
 cd user-management-app
 
 
