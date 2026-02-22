@@ -79,13 +79,9 @@ if (error) {
 }
 
 
-const handleAddUser = (newUser: Omit<User, "id">) => {
-  // i japim ID unike
-  const id = users.length ? Math.max(...users.map(u => u.id)) + 1 : 1;
-
-  // Shto userin në fillim të listes
-  dispatch(addUser({ ...newUser, id }));
-};
+  const handleAddUser = (newUser: Omit<User, "id">) => {
+    dispatch(addUser(newUser));
+  };
 
   const handleDeleteUser = (id: number) => {
     dispatch(deleteUser(id));
@@ -228,8 +224,16 @@ const handleAddUser = (newUser: Omit<User, "id">) => {
           />
         )}
       </Container>
-    </Box>
+         </Box>
   );
 };
+
+
+
+
+
+
+
+
 
 export default UsersPage;
