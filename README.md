@@ -40,20 +40,24 @@ Installation:
 1. Clone the repository
 
 git clone https://github.com/erblinzulfaj/User-Management-App.git
-cd user-management-app
 
 
-2. Install dependencies
+2. Go into the project folder
+
+ cd user-management-app
+
+
+3. Install dependencies
 
 npm install
 
 
-3. Run the app
+4. Run the app
 
 npm run dev
 
 
-4. Open your browser at:
+5. Open your browser at:
 
 http://localhost:5173
 
